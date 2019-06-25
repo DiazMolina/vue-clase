@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>VueJs</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.7.5/css/bulma.min.css">
+</head>
+
+<body>
+    <section id="app" class="hero is-light is-bold is-fullheight">
+        <div class="hero-body">
+            <div class="container">
+                <h1 class="title">Vue</h1>
+                <h2 class=""> vue class</h2>
+                <table>
+                    <tbody>
+                        <tr v-if="items.length === 0">
+                            <td class="has-text-centered" colspan="4">nohay registros</td>
+                        </tr>
+                        <tr v-for="item in items">
+                            <td :class="item.enabled ? '' : 'has-text-grey-light'">{{item.name}}</td>
+                            <td><a :href="item.web">visitar web</a></td>
+                            <td>{{item.salary| currency}}</td>
+                            <td style="width: 100px;">
+                                <button @click="changeStatus(item)"
+                                    :class="{'is-danger':!item.enabled,'is-primary':item.enabled}"
+                                    class="button is-small is-fullwidth is-rounded" type="button">
+                                    {{item.enabled ? 'Activo':'Inactivo'}}
+                                </button>
+
+                            </td>
+                        </tr>
+                    </tbody>
+                    <tfoot>
+                        <td>
+                            <input v-model="newEntry.name" type="text" class="input" placeholder="Nombre">
+                        </td>
+                        <td>
+                            <input v-model="newEntry.Web" type="text" class="input" placeholder="Web">
+                        </td>
+                        <td>
+                            <input v-model="newEntry.salary" type="number" class="input" placeholder="Sueldo">
+                        </td>
+                        <td class="text-right">
+                            <button @click="add" type="button" class="button is-fullwidth">Agregar</button>
+                        </td>
+                    </tfoot>
+                </table>
+                <div class="level">
+                    <div class="level-item has-text-centered">
+                        <div>
+                            <p class="heading">Activo</p>
+                            <p class="title">{{counActiveUser}}</p>
+                        </div>
+                    </div>
+                    <div class="level-item has-text-centered">
+                        <div>
+                            <p class="heading">Inactivo</p>
+                            <p class="title">{{counInactiveUser}}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <script>
+        const app = new Vue({
+            el: "#app",
+            data: {
+                message: 'Hola mundo',
+                /*items: [
+                    { name: 'cristian', enabled: true },
+                    { name: 'eva', enabled: true },
+                    { name: 'pepapig', enabled: false }
+                ]*/
+                items: [
+
+                ],
+                newEntry: {
+                    name: '',
+                    Web: '',
+                    salary: 0,
+                    enabled: true
+                }
+            }, methods: {
+                add() {
+                    this.items.push({
+                        name: this.newEntry.name,
+                        Web: this.newEntry.Web,
+                        salary: parseFloat(this.newEntry.salary),
+                        enabled: this.newEntry.enabled
+                    });
+                    this.newEntry.name = '';
+                    this.newEntry.Web = '';
+                    this.newEntry.salary = 0;
+                    this.newEntry.enabled = true;
+                },
+                changeStatus(item) {
+                    item.enabled = !item.enabled;
+                }
+            },
+            watch: {
+                counActiveUser(newValue,oldValue){
+                    console.log(`el nuevo valor: ${newValue} valor antiguo: ${oldValue}`)
+                }   
+            }
+            ,
+            computed: {
+                counActiveUser() {
+                    return this.items.filter(x => x.enabled).length;
+                },
+                counInactiveUser() {
+                    return this.items.filter(x => !x.enabled).length;
+                }
+            }
+            ,
+            filters: {
+                currency(value) {
+
+                    return value.toLocaleString('en-US', { style: 'currency', currency: 'USD' });
+                }
+            }
+
+
+        })
+    </script>
+</body>
+
+</html>
